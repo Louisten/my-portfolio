@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for admin authentication
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // Hashed password for credentials auth
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("users")
+}
+
+// Project model
+model Project {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String   @db.Text
+  coverImage   String   // URL to the cover image
+  tags         String[] // Array of technology tags
+  demoUrl      String?  // Optional demo URL
+  repoUrl      String?  // Optional repository URL
+  content      String?  @db.Text // Optional detailed markdown content
+  featured     Boolean  @default(false) // Highlight on homepage
+  order        Int      @default(0) // For custom ordering
+  published    Boolean  @default(false) // Draft/Published status
+  publishedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("projects")
+  @@index([slug])
+  @@index([published])
+}
+
+// Experience model (work history, education)
+model Experience {
+  id          String    @id @default(cuid())
+  type        String    // "work" | "education" | "volunteer"
+  title       String    // Job title or degree
+  company     String    // Company or institution name
+  location    String?   // Location (city, country)
+  description String?   @db.Text
+  skills      String[]  // Skills gained/used
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean   @default(false) // Is this current position?
+  order       Int       @default(0) // For custom ordering
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("experiences")
+  @@index([type])
+}
+
+// BlogPost model
+model BlogPost {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String    @db.Text // Short summary
+  content     String    @db.Text // Full markdown content
+  coverImage  String?   // Optional cover image URL
+  tags        String[]  // Category/topic tags
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  publishedAt DateTime?
+  readTime    Int?      // Estimated reading time in minutes
+  views       Int       @default(0) // View counter
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("blog_posts")
+  @@index([slug])
+  @@index([published])
+}
+
+// Settings model (portfolio configuration)
+model Settings {
+  id        String   @id @default(cuid())
+  name      String   // Portfolio owner name
+  tagline   String   @default("Full Stack Developer specializing in Next.js, React, and TypeScript. Building modern web applications and experiences.") @db.Text // Homepage headline/tagline
+  bio       String   @db.Text // About/bio text
+  techStack String[] @default(["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma", "TailwindCSS", "GraphQL"]) // Tech stack items
+  email     String?  // Contact email
+  github    String?  // GitHub profile URL
+  linkedin  String?  // LinkedIn profile URL
+  twitter   String?  // Twitter/X profile URL
+  location  String?  // Location text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
