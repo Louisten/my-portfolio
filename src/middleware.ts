@@ -7,6 +7,9 @@ export async function middleware(req: NextRequest) {
         req,
         secret: process.env.NEXTAUTH_SECRET,
         secureCookie: process.env.NODE_ENV === "production",
+        salt: process.env.NODE_ENV === "production"
+            ? "__Secure-authjs.session-token"
+            : "authjs.session-token",
     });
 
     const isLoggedIn = !!token;
