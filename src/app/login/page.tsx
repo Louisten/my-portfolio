@@ -21,16 +21,25 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            // Use redirect: true and let NextAuth handle the redirect
-            await signIn("credentials", {
+            const result = await signIn("credentials", {
                 email,
                 password,
-                callbackUrl: "/admin",
-                redirect: true,
+                redirect: false,
             });
+
+            if (result?.error) {
+                setError("Invalid email or password");
+                setIsLoading(false);
+            } else if (result?.ok) {
+                // Force a full page reload to /admin
+                window.location.replace("/admin");
+            } else {
+                setError("Login failed. Please try again.");
+                setIsLoading(false);
+            }
         } catch (err) {
             console.error("Login error:", err);
-            setError("Invalid email or password");
+            setError("An unexpected error occurred");
             setIsLoading(false);
         }
     };
