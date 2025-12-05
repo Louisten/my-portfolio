@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminExperiencePage() {
     const result = await getAllExperiences();
     const experiences = result.success && result.data ? result.data : [];

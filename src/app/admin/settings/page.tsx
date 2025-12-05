@@ -1,6 +1,8 @@
 import { getSettings } from "@/actions/settings";
 import { SettingsForm } from "@/components/admin/SettingsForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage() {
     const result = await getSettings();
     const settings = result.success && result.data ? result.data : null;

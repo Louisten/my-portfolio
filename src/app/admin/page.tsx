@@ -3,6 +3,9 @@ import { getAllProjects } from "@/actions/projects";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+// Force dynamic rendering - don't try to build at build time
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
     const result = await getAllProjects();
     const projects = result.success && result.data ? result.data : [];
