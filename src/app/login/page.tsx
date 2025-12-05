@@ -17,28 +17,34 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("Form submitted"); // Debug
         setError("");
         setIsLoading(true);
 
         try {
+            console.log("Calling signIn with email:", email); // Debug
             const result = await signIn("credentials", {
                 email,
                 password,
                 redirect: false,
             });
 
+            console.log("SignIn result:", result); // Debug
+
             if (result?.error) {
+                console.log("Login error:", result.error); // Debug
                 setError("Invalid email or password");
                 setIsLoading(false);
             } else if (result?.ok) {
-                // Force a full page reload to /admin
+                console.log("Login successful, redirecting..."); // Debug
                 window.location.replace("/admin");
             } else {
+                console.log("Unexpected result:", result); // Debug
                 setError("Login failed. Please try again.");
                 setIsLoading(false);
             }
         } catch (err) {
-            console.error("Login error:", err);
+            console.error("Login caught error:", err);
             setError("An unexpected error occurred");
             setIsLoading(false);
         }
