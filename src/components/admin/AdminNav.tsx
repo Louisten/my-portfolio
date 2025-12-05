@@ -50,7 +50,16 @@ export function AdminNav() {
 
             <div className="absolute bottom-4 left-4 right-4">
                 <Button
-                    onClick={() => signOut({ callbackUrl: "/" })}
+                    onClick={async () => {
+                        console.log("SignOut button clicked");
+                        try {
+                            await signOut({ redirect: false });
+                            console.log("SignOut completed");
+                            window.location.href = "/login";
+                        } catch (err) {
+                            console.error("SignOut error:", err);
+                        }
+                    }}
                     variant="outline"
                     className="w-full"
                 >
