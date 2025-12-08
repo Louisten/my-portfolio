@@ -5,10 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { useParams, notFound } from "next/navigation";
-import {
-    ArrowLeft, ExternalLink, Github, Calendar
-} from "lucide-react";
+import { useParams } from "next/navigation";
+import { ArrowLeft, ExternalLink, Github, Calendar } from "lucide-react";
 
 interface Settings {
     name: string;
@@ -36,6 +34,16 @@ const fadeInUp = {
 const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
+};
+
+const fadeInLeft = {
+    hidden: { opacity: 0, x: -40 },
+    visible: { opacity: 1, x: 0 }
+};
+
+const fadeInRight = {
+    hidden: { opacity: 0, x: 40 },
+    visible: { opacity: 1, x: 0 }
 };
 
 const staggerContainer = {
@@ -135,7 +143,7 @@ export default function ProjectDetailPage() {
 
             {/* Main Content */}
             <main className="relative z-10 flex-1">
-                <div className="container mx-auto px-6 py-16">
+                <div className="container mx-auto px-6 py-8">
                     {/* Back Button */}
                     <motion.div
                         initial="hidden"
@@ -152,32 +160,75 @@ export default function ProjectDetailPage() {
                         </Link>
                     </motion.div>
 
-                    {/* Hero Section with Cover Image */}
-                    <motion.div
-                        className="relative rounded-3xl overflow-hidden mb-12"
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeInUp}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <div className="aspect-video relative">
-                            <Image
-                                src={project.coverImage}
-                                alt={project.title}
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
-                        </div>
-                    </motion.div>
+                    {/* Two Column Layout */}
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                        {/* Left Column - Image */}
+                        <motion.div
+                            className="lg:sticky lg:top-8"
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInLeft}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <div className="relative rounded-3xl overflow-hidden glass-card">
+                                <div className="aspect-[4/3] relative">
+                                    <Image
+                                        src={project.coverImage}
+                                        alt={project.title}
+                                        fill
+                                        className="object-cover"
+                                        priority
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                                </div>
 
-                    {/* Project Info */}
-                    <div className="max-w-4xl mx-auto">
+                                {/* Action Buttons - Inside Image Card */}
+                                <div className="absolute bottom-0 left-0 right-0 p-6">
+                                    <div className="flex flex-wrap gap-3">
+                                        {project.demoUrl && (
+                                            <Button asChild size="lg" className="gradient-button rounded-full px-6 shadow-lg shadow-purple-500/25">
+                                                <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                                    Live Demo
+                                                </a>
+                                            </Button>
+                                        )}
+                                        {project.repoUrl && (
+                                            <Button asChild size="lg" className="glass-button rounded-full px-6 bg-white/10 backdrop-blur-md">
+                                                <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                                                    <Github className="w-4 h-4 mr-2" />
+                                                    Source
+                                                </a>
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Tags - Below Image on Desktop */}
+                            <motion.div
+                                className="hidden lg:flex flex-wrap gap-2 mt-6"
+                                variants={staggerContainer}
+                                initial="hidden"
+                                animate="visible"
+                            >
+                                {project.tags.map((tag) => (
+                                    <motion.span
+                                        key={tag}
+                                        className="px-4 py-2 rounded-full text-sm font-medium bg-purple-500/10 border border-purple-500/20 text-purple-300"
+                                        variants={fadeIn}
+                                    >
+                                        {tag}
+                                    </motion.span>
+                                ))}
+                            </motion.div>
+                        </motion.div>
+
+                        {/* Right Column - Content */}
                         <motion.div
                             initial="hidden"
                             animate="visible"
-                            variants={fadeInUp}
+                            variants={fadeInRight}
                             transition={{ duration: 0.6, delay: 0.2 }}
                         >
                             {/* Date */}
@@ -193,18 +244,18 @@ export default function ProjectDetailPage() {
                             )}
 
                             {/* Title */}
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
                                 {project.title}
                             </h1>
 
                             {/* Description */}
-                            <p className="text-xl text-slate-400 leading-relaxed mb-8">
+                            <p className="text-lg md:text-xl text-slate-400 leading-relaxed mb-6">
                                 {project.description}
                             </p>
 
-                            {/* Tags */}
+                            {/* Tags - Mobile Only */}
                             <motion.div
-                                className="flex flex-wrap gap-3 mb-8"
+                                className="flex lg:hidden flex-wrap gap-2 mb-8"
                                 variants={staggerContainer}
                                 initial="hidden"
                                 animate="visible"
@@ -212,7 +263,7 @@ export default function ProjectDetailPage() {
                                 {project.tags.map((tag) => (
                                     <motion.span
                                         key={tag}
-                                        className="px-4 py-2 rounded-full text-sm font-medium bg-purple-500/10 border border-purple-500/20 text-purple-300"
+                                        className="px-3 py-1.5 rounded-full text-sm font-medium bg-purple-500/10 border border-purple-500/20 text-purple-300"
                                         variants={fadeIn}
                                     >
                                         {tag}
@@ -220,74 +271,41 @@ export default function ProjectDetailPage() {
                                 ))}
                             </motion.div>
 
-                            {/* Action Buttons */}
-                            <div className="flex flex-wrap gap-4 mb-12">
-                                {project.demoUrl && (
-                                    <Button asChild size="lg" className="gradient-button rounded-full px-8">
-                                        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                                            <ExternalLink className="w-4 h-4 mr-2" />
-                                            Live Demo
-                                        </a>
-                                    </Button>
-                                )}
-                                {project.repoUrl && (
-                                    <Button asChild size="lg" className="glass-button rounded-full px-8">
-                                        <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                                            <Github className="w-4 h-4 mr-2" />
-                                            View Source
-                                        </a>
-                                    </Button>
-                                )}
-                            </div>
-                        </motion.div>
-
-                        {/* Content */}
-                        {project.content && (
-                            <motion.div
-                                className="glass-card p-8 md:p-12 rounded-3xl"
-                                initial="hidden"
-                                animate="visible"
-                                variants={fadeInUp}
-                                transition={{ duration: 0.6, delay: 0.4 }}
-                            >
-                                <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-white prose-code:text-purple-300 prose-code:bg-white/5 prose-code:px-1 prose-code:rounded">
-                                    {/* Simple markdown-like rendering */}
-                                    {project.content.split('\n').map((line, i) => {
-                                        if (line.startsWith('# ')) {
-                                            return <h2 key={i} className="text-3xl font-bold mb-4 mt-8">{line.slice(2)}</h2>;
-                                        }
-                                        if (line.startsWith('## ')) {
-                                            return <h3 key={i} className="text-2xl font-bold mb-3 mt-6">{line.slice(3)}</h3>;
-                                        }
-                                        if (line.startsWith('### ')) {
-                                            return <h4 key={i} className="text-xl font-bold mb-2 mt-4">{line.slice(4)}</h4>;
-                                        }
-                                        if (line.startsWith('- ')) {
-                                            return <li key={i} className="text-slate-300 ml-4">{line.slice(2)}</li>;
-                                        }
-                                        if (line.trim() === '') {
-                                            return <br key={i} />;
-                                        }
-                                        return <p key={i} className="text-slate-300 mb-4">{line}</p>;
-                                    })}
+                            {/* Content */}
+                            {project.content && (
+                                <div className="glass-card p-6 md:p-8 rounded-2xl mb-8">
+                                    <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-white prose-code:text-purple-300 prose-code:bg-white/5 prose-code:px-1 prose-code:rounded">
+                                        {project.content.split('\n').map((line, i) => {
+                                            if (line.startsWith('# ')) {
+                                                return <h2 key={i} className="text-2xl font-bold mb-4 mt-6 first:mt-0">{line.slice(2)}</h2>;
+                                            }
+                                            if (line.startsWith('## ')) {
+                                                return <h3 key={i} className="text-xl font-bold mb-3 mt-5">{line.slice(3)}</h3>;
+                                            }
+                                            if (line.startsWith('### ')) {
+                                                return <h4 key={i} className="text-lg font-bold mb-2 mt-4">{line.slice(4)}</h4>;
+                                            }
+                                            if (line.startsWith('- ')) {
+                                                return <li key={i} className="text-slate-300 ml-4">{line.slice(2)}</li>;
+                                            }
+                                            if (line.trim() === '') {
+                                                return <br key={i} />;
+                                            }
+                                            return <p key={i} className="text-slate-300 mb-3">{line}</p>;
+                                        })}
+                                    </div>
                                 </div>
-                            </motion.div>
-                        )}
+                            )}
 
-                        {/* Navigation */}
-                        <motion.div
-                            className="mt-12 text-center"
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeInUp}
-                            transition={{ duration: 0.6, delay: 0.6 }}
-                        >
-                            <Button asChild variant="ghost" className="glass-button text-slate-300 hover:text-white rounded-full px-8 py-6 text-lg group">
-                                <Link href="/projects">
-                                    <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                                    View All Projects
-                                </Link>
-                            </Button>
+                            {/* Navigation */}
+                            <div className="pt-4">
+                                <Button asChild variant="ghost" className="glass-button text-slate-300 hover:text-white rounded-full px-6 py-5 group">
+                                    <Link href="/projects">
+                                        <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                                        View All Projects
+                                    </Link>
+                                </Button>
+                            </div>
                         </motion.div>
                     </div>
                 </div>
@@ -295,7 +313,7 @@ export default function ProjectDetailPage() {
 
             {/* Footer */}
             <motion.footer
-                className="relative z-10 glass border-t border-white/10 py-12"
+                className="relative z-10 glass border-t border-white/10 py-12 mt-16"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
