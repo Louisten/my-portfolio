@@ -46,11 +46,24 @@ export default function AboutPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetch("/api/settings").then(res => res.json()).then(data => {
-            if (data.success) setSettings(data.data);
-            setIsLoading(false);
-        }).catch(() => setIsLoading(false));
+        fetch("/api/settings", { cache: "no-store" })
+            .then(res => res.json())
+            .then(data => {
+                console.log("About page - API response:", data);
+                if (data.success && data.data) {
+                    console.log("About page - Setting settings:", data.data);
+                    setSettings(data.data);
+                }
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.error("About page - Fetch error:", err);
+                setIsLoading(false);
+            });
     }, []);
+
+    // Debug log to check current state
+    console.log("About page render - isLoading:", isLoading, "settings:", settings);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden">
@@ -128,7 +141,9 @@ export default function AboutPage() {
                                 <>
                                     <motion.h2
                                         className="text-3xl md:text-4xl font-bold mb-4 gradient-text"
-                                        variants={fadeIn}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5 }}
                                     >
                                         {settings.name}
                                     </motion.h2>
@@ -136,7 +151,9 @@ export default function AboutPage() {
                                     {settings.location && (
                                         <motion.div
                                             className="flex items-center gap-2 mb-6"
-                                            variants={fadeIn}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.5, delay: 0.1 }}
                                         >
                                             <span className="text-xl">📍</span>
                                             <span className="text-slate-400">{settings.location}</span>
@@ -145,7 +162,9 @@ export default function AboutPage() {
 
                                     <motion.div
                                         className="prose prose-invert max-w-none"
-                                        variants={fadeIn}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, delay: 0.2 }}
                                     >
                                         <p className="text-lg text-slate-300 leading-relaxed whitespace-pre-wrap">
                                             {settings.bio || "No bio available yet."}

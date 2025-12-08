@@ -100,6 +100,7 @@ model Settings {
   github    String?  // GitHub profile URL
   linkedin  String?  // LinkedIn profile URL
   twitter   String?  // Twitter/X profile URL
+  profileImage String? // Profile picture URL
   location  String?  // Location text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

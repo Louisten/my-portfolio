@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import type { Settings } from "@prisma/client";
 
 interface SettingsFormProps {
@@ -25,6 +26,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     const [success, setSuccess] = useState(false);
     const [techStack, setTechStack] = useState<string[]>(settings.techStack || []);
     const [newTech, setNewTech] = useState("");
+    const [profileImage, setProfileImage] = useState<string>(settings.profileImage || "");
 
     const {
         register,
@@ -42,6 +44,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             github: settings.github || "",
             linkedin: settings.linkedin || "",
             twitter: settings.twitter || "",
+            profileImage: settings.profileImage || "",
             location: settings.location || "",
         },
     });
@@ -139,6 +142,25 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                         {errors.bio && (
                             <p className="text-sm text-destructive">{errors.bio.message}</p>
                         )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Profile Picture</Label>
+                        <ImageUpload
+                            value={profileImage}
+                            onChange={(url) => {
+                                setProfileImage(url);
+                                setValue("profileImage", url);
+                            }}
+                            onRemove={() => {
+                                setProfileImage("");
+                                setValue("profileImage", "");
+                            }}
+                            endpoint="profileImage"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Upload your profile picture. It will appear on the homepage hero section.
+                        </p>
                     </div>
                 </CardContent>
             </Card>

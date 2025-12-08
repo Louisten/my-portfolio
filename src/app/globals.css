@@ -64,8 +64,32 @@
     @apply border-border;
   }
 
+  html {
+    background-color: #020617;
+    /* slate-950 */
+    overflow-x: hidden;
+    overscroll-behavior: none;
+  }
+
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(to bottom right, #020617, #0f172a, #020617);
+    min-height: 100vh;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    position: relative;
+  }
+
+  /* Fixed background to prevent white on overscroll */
+  body::before {
+    content: "";
+    position: fixed;
+    top: -100vh;
+    left: 0;
+    right: 0;
+    bottom: -100vh;
+    background: linear-gradient(to bottom right, #020617, #0f172a, #020617);
+    z-index: -1;
   }
 }
 
@@ -74,7 +98,7 @@
 
   /* Base glass effect */
   .glass {
-    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg;
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg;
   }
 
   /* Stronger glass effect with more opacity */
@@ -140,6 +164,47 @@
 
   .animate-float-fast {
     animation: float-fast 10s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0% {
+      opacity: 0.2;
+      transform: scale(0.8);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  /* Marquee Animation */
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+
+  .animate-marquee-reverse {
+    animation: marquee-reverse 25s linear infinite;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-100% - 1rem));
+    }
+  }
+
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(calc(-100% - 1rem));
+    }
+
+    to {
+      transform: translateX(0);
+    }
   }
 
   @keyframes float-slow {

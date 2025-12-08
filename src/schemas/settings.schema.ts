@@ -9,6 +9,7 @@ export const settingsSchema = z.object({
     github: z.string().url("Invalid URL").optional().or(z.literal("")),
     linkedin: z.string().url("Invalid URL").optional().or(z.literal("")),
     twitter: z.string().url("Invalid URL").optional().or(z.literal("")),
+    profileImage: z.string().optional().or(z.literal("")),
     location: z.string().optional(),
 });
 
