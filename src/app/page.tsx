@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -201,11 +202,22 @@ export default function HomePage() {
 
                             {/* Profile Image Container */}
                             <div className="relative w-56 h-72 sm:w-64 sm:h-80 md:w-72 md:h-96 lg:w-80 lg:h-[26rem] rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl shadow-purple-500/20">
-                                <img
-                                    src={settings.profileImage || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=faces"}
-                                    alt={settings.name}
-                                    className="w-full h-full object-cover"
-                                />
+                                {settings.profileImage ? (
+                                    <Image
+                                        src={settings.profileImage}
+                                        alt={settings.name}
+                                        fill
+                                        sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+                                        className="object-cover"
+                                        priority
+                                        placeholder="blur"
+                                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAYH/8QAIRAAAgEDBAMBAAAAAAAAAAAAAQIDBAAFBhESITFBUXH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AqNR6mzGIx8VxbRWksUo5RmaNnZQewQGHR+9dUUoD/9k="
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-br from-purple-600/30 to-cyan-500/30 flex items-center justify-center">
+                                        <span className="text-6xl">👤</span>
+                                    </div>
+                                )}
                                 {/* Subtle gradient overlay on image */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
                             </div>
