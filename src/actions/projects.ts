@@ -149,3 +149,26 @@ export async function getPublishedProjects() {
         return { success: false, error: "Failed to fetch projects" };
     }
 }
+
+/**
+ * Get a single published project by slug (for public view)
+ */
+export async function getProjectBySlug(slug: string) {
+    try {
+        const project = await prisma.project.findFirst({
+            where: {
+                slug,
+                published: true
+            },
+        });
+
+        if (!project) {
+            return { success: false, error: "Project not found" };
+        }
+
+        return { success: true, data: project };
+    } catch (error) {
+        console.error("Error fetching project:", error);
+        return { success: false, error: "Failed to fetch project" };
+    }
+}
