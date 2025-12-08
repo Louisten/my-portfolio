@@ -1,9 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+
+// Lazy load the heavy 3D background component
+const Background3D = dynamic(
+    () => import("@/components/ui/background-3d").then(mod => ({ default: mod.Background3D })),
+    {
+        ssr: false,
+        loading: () => null // Show nothing while loading, CSS gradient is the fallback
+    }
+);
 
 interface Settings {
     name: string;
@@ -15,9 +25,6 @@ interface Settings {
     twitter?: string | null;
     profileImage?: string | null;
 }
-import { ShootingStars } from "@/components/ui/shooting-stars";
-import { StarsBackground } from "@/components/ui/stars-background";
-import { Background3D } from "@/components/ui/background-3d";
 import { FileCode2, Github, Globe, LayoutGrid, Linkedin, Mail, MapPin, Terminal, Twitter, User } from "lucide-react";
 
 interface Project {
