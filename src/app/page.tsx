@@ -5,7 +5,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useMemo } from "react";
 
 // Lazy load the heavy 3D background component
 const Background3D = dynamic(
@@ -26,7 +26,7 @@ interface Settings {
     twitter?: string | null;
     profileImage?: string | null;
 }
-import { FileCode2, Github, Globe, LayoutGrid, Linkedin, Mail, MapPin, Terminal, Twitter, User } from "lucide-react";
+import { Briefcase, FileCode2, Github, Globe, GraduationCap, Heart, LayoutGrid, Linkedin, Mail, MapPin, Terminal, Twitter, User } from "lucide-react";
 
 interface Project {
     id: string;
@@ -35,6 +35,19 @@ interface Project {
     description: string;
     coverImage: string;
     tags: string[];
+}
+
+interface Experience {
+    id: string;
+    type: string;
+    title: string;
+    company: string;
+    location?: string | null;
+    description?: string | null;
+    skills: string[];
+    startDate: string;
+    endDate?: string | null;
+    current: boolean;
 }
 
 // Animation variants
@@ -66,6 +79,13 @@ const scaleIn = {
 export default function HomePage() {
     const [settings, setSettings] = useState<Settings>({ name: "Your Name", tagline: "", techStack: [] });
     const [projects, setProjects] = useState<Project[]>([]);
+    const [experiences, setExperiences] = useState<Experience[]>([]);
+    const [showAllExperiences, setShowAllExperiences] = useState(false);
+
+    const displayedExperiences = useMemo(() => {
+        if (showAllExperiences) return experiences;
+        return experiences.slice(0, 5);
+    }, [experiences, showAllExperiences]);
 
     useEffect(() => {
         fetch("/api/settings", { cache: "no-store" }).then(res => res.json()).then(data => {
@@ -79,6 +99,10 @@ export default function HomePage() {
 
         fetch("/api/projects").then(res => res.json()).then(data => {
             if (data.success) setProjects(data.data?.slice(0, 3) || []);
+        }).catch(() => { });
+
+        fetch("/api/experiences").then(res => res.json()).then(data => {
+            if (data.success) setExperiences(data.data || []);
         }).catch(() => { });
     }, []);
 
@@ -251,7 +275,121 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* Featured Projects Section */}
+            {/* Experience Section */}
+            {experiences.length > 0 && (
+                <section className="relative z-10 py-32">
+                    <div className="container mx-auto px-6">
+                        <motion.div
+                            className="mb-16"
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            variants={fadeInUp}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <h2 className="text-4xl md:text-5xl font-bold mb-6">Experience</h2>
+                            <p className="text-slate-400 max-w-xl text-lg">
+                                My professional journey across different roles and organizations.
+                            </p>
+                        </motion.div>
+
+                        <motion.div
+                            className="relative"
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            variants={staggerContainer}
+                        >
+                            {/* Timeline line */}
+                            <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500/50 via-cyan-500/50 to-transparent" />
+
+                            <div className="space-y-8">
+                                {displayedExperiences.map((exp, index) => (
+                                    <motion.div
+                                        key={exp.id}
+                                        className="relative pl-16 md:pl-20"
+                                        variants={fadeInUp}
+                                        transition={{ delay: index * 0.1 }}
+                                    >
+                                        {/* Timeline dot */}
+                                        <div className="absolute left-3 md:left-5 top-6 w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                                            {exp.type === "work" && <Briefcase className="w-3 h-3 text-white" />}
+                                            {exp.type === "education" && <GraduationCap className="w-3 h-3 text-white" />}
+                                            {exp.type === "volunteer" && <Heart className="w-3 h-3 text-white" />}
+                                        </div>
+
+                                        {/* Experience card */}
+                                        <div className="glass-card p-6 md:p-8 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+                                                <div>
+                                                    <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                                                        {exp.title}
+                                                    </h3>
+                                                    <p className="text-purple-400 font-medium">{exp.company}</p>
+                                                </div>
+                                                <div className="flex items-center gap-3 text-sm text-slate-400">
+                                                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                                                        {new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {exp.current ? 'Present' : exp.endDate ? new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present'}
+                                                    </span>
+                                                    {exp.location && (
+                                                        <span className="hidden md:flex items-center gap-1">
+                                                            <MapPin className="w-3 h-3" />
+                                                            {exp.location}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {exp.description && (
+                                                <p className="text-slate-400 mb-4 leading-relaxed">
+                                                    {exp.description}
+                                                </p>
+                                            )}
+
+                                            {exp.skills.length > 0 && (
+                                                <div className="flex flex-wrap gap-2">
+                                                    {exp.skills.map((skill) => (
+                                                        <span
+                                                            key={skill}
+                                                            className="px-3 py-1 rounded-full text-xs font-medium bg-purple-500/10 border border-purple-500/20 text-purple-300"
+                                                        >
+                                                            {skill}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        {/* Show More/Less Button */}
+                        {experiences.length > 5 && (
+                            <motion.div
+                                className="mt-12 text-center"
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={fadeInUp}
+                            >
+                                <Button
+                                    onClick={() => setShowAllExperiences(!showAllExperiences)}
+                                    variant="ghost"
+                                    className="glass-button text-slate-300 hover:text-white rounded-full px-8 py-6 text-lg group"
+                                >
+                                    {showAllExperiences ? (
+                                        <>Show Less<span className="ml-2 group-hover:-translate-y-1 transition-transform">↑</span></>
+                                    ) : (
+                                        <>Show {experiences.length - 5} More<span className="ml-2 group-hover:translate-y-1 transition-transform">↓</span></>
+                                    )}
+                                </Button>
+                            </motion.div>
+                        )}
+                    </div>
+                </section>
+            )}
+
             {/* Featured Projects Section */}
             {projects.length > 0 && (
                 <section className="relative z-10 py-32">

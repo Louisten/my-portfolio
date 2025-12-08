@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { DeleteProjectButton } from "@/components/admin/DeleteProjectButton";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,10 @@ export default async function AdminProjectsPage() {
                                                 Edit
                                             </Link>
                                         </Button>
+                                        <DeleteProjectButton
+                                            projectId={project.id}
+                                            projectTitle={project.title}
+                                        />
                                     </div>
                                 </div>
                             </CardHeader>
